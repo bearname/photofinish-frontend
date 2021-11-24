@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row class="margin-bottom-20">
-      <v-col sm="12" md="6" offset-md="3">  <v-card @submit.prevent>
+      <v-col sm="8" md="6" offset-md="3">  <v-card @submit.prevent>
         <v-card-text>
           <v-text-field
               label="Username"
@@ -43,7 +43,7 @@
       </v-card></v-col>
     </v-row>
     <p v-if="error">{{ error }}</p>
-<!--    <v-btn @click.prevent="toggleLogin">{{ textLoginString }}</v-btn>-->
+    <!--    <v-btn @click.prevent="toggleLogin">{{ textLoginString }}</v-btn>-->
   </v-container>
 </template>
 

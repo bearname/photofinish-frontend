@@ -117,12 +117,12 @@ a:visited {
 a:hover {
   color: #ffffff;
   background-color: transparent;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 a:active {
   color: #ffffff;
   background-color: transparent;
-  text-decoration: underline;
+  text-decoration: none;
 }
 </style>

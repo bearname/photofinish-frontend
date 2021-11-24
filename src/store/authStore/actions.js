@@ -1,7 +1,7 @@
 import dbUtils from '../dbUtils';
 import jwt_decode from 'jwt-decode';
 
-const BASE_URL = "https://evening-atoll-24533.herokuapp.com";
+const BASE_URL = "https://thawing-sea-83431.herokuapp.com";
 
 const actions = {
     async login(context, {username, password}) {

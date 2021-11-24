@@ -30,7 +30,7 @@ EventBus.$on('events', clickHandler);
   left: 10px;
   top: 10px;
   z-index: 100;
-  max-width: 288px;
+  max-width: 400px;
   max-height: 48px;
   width: 288px;
   height: 48px;

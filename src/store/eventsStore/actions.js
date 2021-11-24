@@ -3,7 +3,7 @@ import videosUtil from './videoUtil';
 import logError from '../../util/logger';
 import makeRequest from '../../api/api';
 import VideoStatus from './videoStatus';
-const BASE_URL = "https://evening-atoll-24533.herokuapp.com";
+const BASE_URL = "https://thawing-sea-83431.herokuapp.com";
 
 const actions = {
     async getVideoById(context, {videoId}) {
