@@ -125,4 +125,7 @@ a:active {
   background-color: transparent;
   text-decoration: none;
 }
+.v-main__wrap {
+  position: initial;
+}
 </style>

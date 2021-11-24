@@ -1,6 +1,13 @@
 <template>
-
   <div>
+    <div
+        @click="isShowGallery=false"
+        v-if="isShowGallery"
+        id="lightboxOverlay"
+        tabindex="-1"
+        class="lightboxOverlay"
+        style="width: 100vw; height: 100vh;"
+    ></div>
     <!--  <div class="home-bg">-->
     <v-container>
       <v-row>
@@ -124,19 +131,19 @@
     <div
         v-if="isShowGallery"
     >
-
+      <button id="lbClose"
+              class="btn btn-sm lb-modal-close"
+              @click="isShowGallery = false"
+      >
+        <div>
+          <IconCloseSecond/>
+        </div>
+      </button>
       <div id="lightbox"
            tabindex="-1"
            class="lightbox"
       >
-        <button id="lbClose"
-                class="btn btn-outline-danger btn-sm lb-modal-close"
-                @click="isShowGallery = false"
-        >
-          <div>
-            <IconCloseSecond/>
-          </div>
-        </button>
+
         <div class="lb-outerContainer">
           <div class="lb-container">
             <img id="lbImage" class="lb-image" :src=currentPath alt="">
@@ -161,14 +168,7 @@
         </div>
       </div>
     </div>
-    <div
-        @click="isShowGallery=false"
-        v-if="isShowGallery"
-        id="lightboxOverlay"
-        tabindex="-1"
-        class="lightboxOverlay"
-        style="width: 100vw; height: 100vh;"
-    ></div>
+
 
     <p id="alert" data-page="0"></p>
   </div>
@@ -812,6 +812,21 @@ body, html {
     position: fixed;
     left: 50%;
     transform: translate(-50%,-50%);
+  }
+  @media (max-width: 1208px) {
+    .lb-modal-close {
+      position: absolute;
+      z-index: 10000;
+      top: 0;
+      right: 0;
+      bottom: unset;
+      left: unset;
+      padding: 12px;
+    }
+
+    .lb-modal-close:hover {
+      cursor:pointer;
+    }
   }
 }
 
