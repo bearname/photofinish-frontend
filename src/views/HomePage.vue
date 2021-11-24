@@ -130,6 +130,7 @@
 
     <div
         v-if="isShowGallery"
+        class="lightbox__wrapper"
     >
       <button id="lbClose"
               class="btn btn-sm lb-modal-close"
@@ -803,7 +804,24 @@ body, html {
   max-width: 80vh;
   border: none;
 }
+.lightbox__wrapper {
+  position: fixed;
+  z-index: 10000;
+}
 
+.lb-modal-close {
+  position: fixed;
+  z-index: 10000;
+  top: 0;
+  right: 0;
+  bottom: unset;
+  left: unset;
+  padding: 12px;
+}
+
+.lb-modal-close:hover {
+  cursor:pointer;
+}
 
 @media (max-width: 1208px) {
   .lightbox, .lb-outerContainer {
@@ -813,21 +831,6 @@ body, html {
     position: fixed;
     left: 50%;
     transform: translate(-50%,-50%);
-  }
-  @media (max-width: 1208px) {
-    .lb-modal-close {
-      position: absolute;
-      z-index: 10000;
-      top: 0;
-      right: 0;
-      bottom: unset;
-      left: unset;
-      padding: 12px;
-    }
-
-    .lb-modal-close:hover {
-      cursor:pointer;
-    }
   }
 }
 
