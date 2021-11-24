@@ -804,6 +804,7 @@ body, html {
   border: none;
 }
 
+
 @media (max-width: 1208px) {
   .lightbox, .lb-outerContainer {
     /*max-height: 80vh;*/
