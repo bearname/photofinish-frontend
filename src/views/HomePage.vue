@@ -818,13 +818,9 @@ body, html {
 .lightbox__wrapper {
   position: fixed;
   z-index: 10000;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 80vw;
-  max-height: 80vh;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
 }
 
 .lb-modal-close {
