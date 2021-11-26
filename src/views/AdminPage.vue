@@ -38,8 +38,8 @@
     </v-container>
     <v-container>
       <v-row class="mb-10">
-        <v-btn class="btn" v-on:click="openNewEventPopup">Создать событие</v-btn>
-        <v-btn class="btn" v-on:click="openNewImagePopup">Добавить изображения</v-btn>
+        <v-btn class="btn" v-on:click="openNewEventPopup">Create event</v-btn>
+        <v-btn class="btn" v-on:click="openNewImagePopup">Add images</v-btn>
         <v-btn
             depressed
             color="error"
@@ -121,13 +121,13 @@
           >
             <v-card>
               <v-card-title class="text-h5 grey lighten-2">
-                Новые событие
+                New events
               </v-card-title>
               <v-divider></v-divider>
               <v-card-text>
                 <v-text-field
                     autofocus
-                    label="Название"
+                    label="Name"
                     v-model="eventName"
                     :rules="rules"
                     hide-details="auto"
@@ -138,7 +138,7 @@
                 <v-text-field
                     v-model="eventLocation"
                     :rules="rules"
-                    label="Локация"
+                    label="Location"
                     color="grey darken-3"
                 ></v-text-field>
               </v-card-text>
@@ -162,7 +162,7 @@
                 </v-btn>
                 <v-btn class="btn"
                        text
-                       @click="submitNewEvent">Сохранить
+                       @click="submitNewEvent">Save
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -175,13 +175,13 @@
           >
             <v-card>
               <v-card-title class="text-h5 grey lighten-2">
-                Новые изображения
+                New photos
               </v-card-title>
               <v-divider></v-divider>
               <v-card-text>
                 <v-text-field
                     autofocus
-                    label="Путь dropbox папки"
+                    label="dropbox folder path"
                     v-model="dropboxPath"
                     :rules="path"
                     hint="/images"
@@ -213,7 +213,7 @@
                     text
                     @click="submitNewImages"
                 >
-                  Отправить
+                  Send
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -324,7 +324,6 @@
         <p>Not found</p>
       </v-row>
     </v-container>
-
   </div>
 </template>
 
@@ -600,7 +599,7 @@ export default {
         });
         this.newImageToProcessingPopup = false;
         const status = this.getStatus();
-        publishEvent(status, status ? "Отправлено на обработку" : this.getMessage());
+        publishEvent(status, status ? "Sent for processing" : this.getMessage());
       } catch (e) {
         console.log(e);
         publishEvent(false, e);
