@@ -8,7 +8,7 @@ const actions = {
         try {
             context.commit('setUsername');
 
-            console.log(context.getters.username);
+            // console.log(context.getters.username);
             const response = await fetch(BASE_URL + '/api/v1/auth/login', {
                 method: 'POST',
                 body: JSON.stringify({username: username, password: password}),
@@ -19,12 +19,12 @@ const actions = {
                 return;
             }
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             const {accessToken, refreshToken} = data;
             await dbUtils.addUser({username, password});
             context.commit('LOGIN', {username, accessToken, refreshToken});
             console.log('context.state.user after login');
-            console.log(context.state.user);
+            // console.log(context.state.user);
 
             // context.commit('SET_REFRESH_TOKEN', {refreshToken});
             context.commit('SET_COOKIE', {
@@ -107,7 +107,7 @@ const actions = {
             expiration = data.exp * 1000;
         }
 
-        console.log(getters.getCurrentUser);
+        // console.log(getters.getCurrentUser);
         if (getters.getAccessToken === '' || Date.now() > expiration) {
             try {
                 const config = {

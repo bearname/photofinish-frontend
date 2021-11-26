@@ -48,7 +48,7 @@ export default {
       };
       await this.updateVideoTitleAndDescription(video);
       const status = this.getVideoStatus();
-      console.log(status)
+      // console.log(status)
     }
   }
 }

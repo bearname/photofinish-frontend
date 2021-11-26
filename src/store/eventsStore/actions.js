@@ -36,7 +36,7 @@ const actions = {
             };
 
             const url =BASE_URL + `/api/v1/picture/detectText/dropbox?path=${path}&eventId=${eventId}`;
-            console.log('upload video' + url);
+            // console.log('upload video' + url);
             axios.post(url, null, config).then(data => console.log(data)).then(err => console.log(err));
         } catch (error) {
             context.state.isProcessing = false;
@@ -48,9 +48,9 @@ const actions = {
         try {
             const url =BASE_URL + '/api/v1/videos/?page=' + page +
                 '&countVideoOnPage=' + countVideoOnPage;
-            console.log(url);
+            // console.log(url);
             const response = await axios.get(url);
-            console.log(response.data);
+            // console.log(response.data);
             const {pageCount, videos} = response.data;
 
             if (Object.keys(response.data).includes('pageCount')) {
@@ -77,7 +77,7 @@ const actions = {
 
             const data = await makeRequest(context, url, config);
 
-            console.log(data);
+            // console.log(data);
             const {code, message} = data;
             context.state.success = code === 1
             context.state.message = message;
@@ -99,7 +99,7 @@ const actions = {
             };
             const data = await makeRequest(context, url, config);
 
-            console.log(data);
+            // console.log(data);
             const {code, message} = data;
             context.state.success = code;
             context.state.message = message;
@@ -121,7 +121,7 @@ const actions = {
             };
             const data = await makeRequest(context, url, config);
 
-            console.log(data);
+            // console.log(data);
             const {code, message} = data;
             context.state.success = code;
             context.state.message = message;
@@ -147,8 +147,8 @@ const actions = {
             const response = await axios.get(url, config);
 
             const data = response.data;
-            console.log('response.data');
-            console.log(data);
+            // console.log('response.data');
+            // console.log(data);
             if (Object.keys(data).includes('data')) {
                 context.state.events = data.data;
             }

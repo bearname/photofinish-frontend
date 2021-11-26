@@ -40,7 +40,7 @@ export default {
   async created() {
     if (this.search !== undefined && this.search !== null && this.search.length !== 0) {
       await this.searchVideos(this.search);
-      console.log(this.search);
+      // console.log(this.search);
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Slash') {
           let searchBoxElement = document.getElementById('searchBox');
@@ -66,7 +66,7 @@ export default {
     async searchVideos(searchString) {
       await this.searchVideosByQuery({searchString: searchString});
       this.videos = this.getVideos();
-      console.log(this.videos);
+      // console.log(this.videos);
     },
     closeShow() {
       this.show = !this.show;

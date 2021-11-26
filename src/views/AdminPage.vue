@@ -438,10 +438,9 @@ export default {
       getEvents: "eventsMod/getEvents",
     }),
     async fetchEvents() {
-      const events = await this.findEvents();
-      console.log("data");
-      console.log(events);
-      this.events = events;
+      // console.log("data");
+      // console.log(events);
+      this.events = await this.findEvents();
     },
     async goToPage() {
       if (this.isShowPageSelection) {
@@ -449,8 +448,8 @@ export default {
           publishEvent(false, `Valid page range [1, ${this.countPages}]`);
           return;
         }
-        console.log("this.selectedPage");
-        console.log(this.selectedPage);
+        // console.log("this.selectedPage");
+        // console.log(this.selectedPage);
         await this.searchEventImages(this.eventId, Number.parseInt(this.selectedPage) - 1);
         this.isShowPageSelection = false;
       } else {
@@ -458,8 +457,8 @@ export default {
       }
     },
     onDeleteEvent(eventId, action = 'event') {
-      console.log("eventId");
-      console.log(eventId);
+      // console.log("eventId");
+      // console.log(eventId);
       this.deleteEventId = eventId;
       this.action = action;
       this.approveToDeleteEventPermanent = true;
@@ -469,10 +468,10 @@ export default {
     },
     async approvedDeleteEvent() {
       const action = this.action;
-      console.log("eventId");
+      // console.log("eventId");
       this.approveToDeleteEventPermanent = false;
       const itemId = this.deleteEventId;
-      console.log(itemId);
+      // console.log(itemId);
 
       if (action === 'event') {
         await this.deleteEvent({eventId: itemId});
@@ -481,7 +480,7 @@ export default {
         if (itemId !== -1) {
           this.picturesToDelete = [itemId]
         }
-        console.log(JSON.stringify(this.picturesToDelete));
+        // console.log(JSON.stringify(this.picturesToDelete));
         await this.deletePicture({pictures: this.picturesToDelete});
       }
 
@@ -539,10 +538,9 @@ export default {
         this.currentImage = -1;
       }
       this.currentImage++;
-      console.log(this.currentImage);
-      let path = this.images[this.currentImage].Path.replace("-thumb", "-preview");
-      console.log(path);
-      this.picturePath = path;
+      // console.log(this.currentImage);
+      // console.log(path);
+      this.picturePath = this.images[this.currentImage].Path.replace("-thumb", "-preview");
     },
     prevImage(e) {
       e.preventDefault();
@@ -566,9 +564,9 @@ export default {
         publishEvent(success, "invalid event name or event location");
         return
       }
-      console.log(this.eventName);
-      console.log(this.eventDate);
-      console.log(this.eventLocation);
+      // console.log(this.eventName);
+      // console.log(this.eventDate);
+      // console.log(this.eventLocation);
       await this.createNewEvent({name: this.eventName, location: this.eventLocation, date: this.eventDate});
       const success = this.getStatus();
       const message = this.getMessage();

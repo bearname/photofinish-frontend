@@ -78,7 +78,7 @@ export default {
       this.status = this.getStatus();
     },
     toggleDialog() {
-      console.log('dialog')
+      // console.log('dialog')
       this.dialog = true;
     }
   }

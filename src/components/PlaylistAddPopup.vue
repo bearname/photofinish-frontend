@@ -43,8 +43,8 @@ export default {
     this.idVideo = this.videoId;
     this.createPlaylistPopupElement = document.getElementById("createPlaylistPopup");
     this.generalPopupElement = document.getElementById("popup");
-    console.log(`this.generalPopupElement`);
-    console.log(this.generalPopupElement);
+    // console.log(`this.generalPopupElement`);
+    // console.log(this.generalPopupElement);
     await this.fetchUserPlaylists();
     this.userPlaylists = this.getUserPlaylists();
   },
@@ -94,7 +94,7 @@ export default {
       unHideElement(this.createPlaylistPopupElement);
     },
     togglePopup() {
-      console.log('toggle popup')
+      // console.log('toggle popup')
       toggleHideElement(this.generalPopupElement);
     },
     getCurrentVideos() {

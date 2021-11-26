@@ -5,7 +5,7 @@ const getters = {
     return state.user;
   },
   isLoggedIn(state) {
-    console.log(state.user);
+    // console.log(state.user);
     if (!state.user) {
       return false;
     }

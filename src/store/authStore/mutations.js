@@ -6,8 +6,8 @@ const mutations = {
     state.username = 'otto';
   },
   LOGIN(state, {username, accessToken, refreshToken}) {
-    console.log('login mutation');
-    console.log(state.user);
+    // console.log('login mutation');
+    // console.log(state.user);
 
     state.user.loggedIn = true;
     state.user.username = username;
@@ -20,7 +20,7 @@ const mutations = {
       accessToken: accessToken,
       refreshToken: refreshToken,
     }
-    console.log(state.user);
+    // console.log(state.user);
   },
   LOGOUT(state) {
     state.user.loggedIn = false;
@@ -29,11 +29,11 @@ const mutations = {
     state.user.accessToken = '';
   },
   SET_ACCESS_TOKEN(state, {accessToken}) {
-    console.log('SET_ACCESS_TOKEN');
+    // console.log('SET_ACCESS_TOKEN');
     state.user.accessToken = accessToken;
   },
   SET_REFRESH_TOKEN(state, {refreshToken}) {
-    console.log('SET_REFRESH_TOKEN');
+    // console.log('SET_REFRESH_TOKEN');
     state.user.refreshToken = refreshToken;
   },
   SET_COOKIE(state, {username, accessToken}) {

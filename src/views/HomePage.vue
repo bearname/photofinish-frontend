@@ -72,12 +72,12 @@
         </v-col>
       </v-row>
       <v-row class="mb-5">
-        <v-col :cols="12" v-if="Math.floor(allImagesCount / limit) > 0">
+        <v-col :cols="12" v-if="Math.round(allImagesCount / limit) > 0">
           <v-btn @click="searchNext(false)">
             <IconNavigatePrev/>
           </v-btn>
           <v-btn class="disabled" @click="isShowPageSelection = !isShowPageSelection">
-            {{ offset / limit + 1 }} of {{ Math.floor(allImagesCount / limit) }}
+            {{ offset / limit + 1 }} of {{ Math.round(allImagesCount / limit) + (allImagesCount % limit > 0 ? 1 : 0) }}
           </v-btn>
           <v-btn @click="searchNext(true)">
             <IconNavigateNext/>
@@ -99,6 +99,14 @@
             lg="3"
             xl="2"
         >
+          <!--          <img-->
+          <!--              :src="picture.Path"-->
+          <!--              gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"-->
+          <!--              max-height="280"-->
+          <!--              max-width="280"-->
+          <!--              aspect-ratio="1"-->
+          <!--              class="ma-auto grey pointer lighten-2"-->
+          <!--              @click="openGallery(picture, index)" alt="image"/>-->
           <v-img
               :src="picture.Path"
               gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
@@ -176,7 +184,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import BASE_URL from "../config";
 import IconSearch from "../components/icons/IconSearch";
 import IconNavigateNext from "../components/icons/IconNavigateNext";
@@ -185,11 +193,11 @@ import IconCloseSecond from "../components/icons/IconCloseSecond";
 
 export default {
   name: "Home",
-  components: { IconCloseSecond, IconNavigatePrev, IconNavigateNext, IconSearch },
-  data () {
+  components: {IconCloseSecond, IconNavigatePrev, IconNavigateNext, IconSearch},
+  data() {
     return {
       images: [],
-      page: { limit: 20, offset: 0 },
+      page: {limit: 20, offset: 0},
       limit: 20,
       offset: 0,
       allImagesCount: 0,
@@ -203,12 +211,12 @@ export default {
     }
   },
   computed: {
-    isLoggedUser () {
+    isLoggedUser() {
       return this.isLogged()
     }
   },
-  async mounted () {
-    const page = { limit: 20, offset: 0 }
+  async mounted() {
+    const page = {limit: 20, offset: 0}
     const response = await this.searchImages(BASE_URL, {
       q: '',
       confidence: this.selectedConfident,
@@ -218,8 +226,8 @@ export default {
     if (!response.hasOwnProperty('Pictures')) {
       return;
     }
-    console.log('response');
-    console.log(response);
+    // console.log('response');
+    // console.log(response);
     this.images = response.Pictures;
     this.images.forEach(image => {
       image.Path = image.Path.replace("-preview", "-thumb");
@@ -297,7 +305,7 @@ export default {
       getUser: "authMod/getCurrentUser",
       getCurrentUser: "authMod/getCurrentUser",
     }),
-    addImagesListener () {
+    addImagesListener() {
       let resultsElement = document.getElementById("results");
       for (let i = 0; i <= resultsElement.childElementCount - 1; i++) {
         const child = resultsElement.children[i];
@@ -307,14 +315,14 @@ export default {
         });
       }
     },
-    prevImg () {
+    prevImg() {
       if (this.currentImage < 1) {
         this.currentImage = this.images.length;
       }
       this.currentImage--;
       this.currentPath = this.images[this.currentImage].Path.replace("-thumb", "-preview");
     },
-    nextImg () {
+    nextImg() {
       if (this.currentImage >= this.images.length - 1) {
         this.currentImage = -1;
       }
@@ -322,22 +330,22 @@ export default {
       this.currentImage++;
       this.currentPath = this.images[this.currentImage].Path.replace("-thumb", "-preview");
     },
-    openGallery (picture, i) {
+    openGallery(picture, i) {
       this.isShowGallery = true;
       this.currentImage = i;
       this.currentPath = picture.Path.replace("-thumb", "-preview");
     },
-    async searchSubmit (e) {
+    async searchSubmit(e) {
       e.preventDefault();
       this.offset = 0;
       try {
         await this.searchNext();
-        console.log(this.images);
+        // console.log(this.images);
       } catch (err) {
         console.log('error', err);
       }
     },
-    async searchNext (isNext = false) {
+    async searchNext(isNext = false) {
       if (isNext) {
         this.offset += this.limit;
       } else {
@@ -359,7 +367,7 @@ export default {
       });
       this.allImagesCount = response.CountAllItems;
     },
-    async searchImages (baseUrl, options = {}) {
+    async searchImages(baseUrl, options = {}) {
       try {
         let url = `${baseUrl}/api/v1/picture/search?`;
         if (options.hasOwnProperty('q')) {
@@ -768,6 +776,7 @@ body, html {
   left: auto;
   right: 20px;
 }
+
 .lb-prev svg,
 .lb-next svg {
   position: absolute;
@@ -783,6 +792,7 @@ body, html {
 .lb-prev svg {
   left: -50px;
 }
+
 .lb-nav a.lb-prev,
 .lb-nav a.lb-next {
   opacity: 1;
@@ -804,6 +814,7 @@ body, html {
   max-width: 80vh;
   border: none;
 }
+
 .lightbox__wrapper {
   position: fixed;
   z-index: 10000;
@@ -820,7 +831,7 @@ body, html {
 }
 
 .lb-modal-close:hover {
-  cursor:pointer;
+  cursor: pointer;
 }
 
 @media (max-width: 1208px) {
@@ -830,7 +841,7 @@ body, html {
     top: 50%;
     position: fixed;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
   }
 }
 

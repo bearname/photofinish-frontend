@@ -54,7 +54,7 @@ const actions = {
       const data = response.json();
       this.state.videos = data.videos;
       this.state.countAllVideos = data.countAllVideos;
-      console.log(data);
+      // console.log(data);
       context.commit('ADD_USER', data);
     } catch (error) {
       console.log(error);
@@ -66,13 +66,13 @@ const actions = {
       const cookie = Cookie.getCookie('userId');
       const url = process.env.VUE_APP_BACKEND_API + '/api/v1/users/' + cookie + '/videos?page=' + page +
         '&countVideoOnPage=' + countVideoOnPage;
-      console.log(url);
+      // console.log(url);
 
       const config = {};
 
       const data = await makeRequest(context, url, config);
       console.log('data');
-      console.log(data);
+      // console.log(data);
       const {videos, countAllVideos} = data;
       context.state.userVideos = videos;
       context.state.userVideos.forEach(videosUtil.updateThumbnail, context.state.userVideos);
@@ -100,7 +100,7 @@ const actions = {
 
       const data = await makeRequest(context, url, config);
       console.log('data');
-      console.log(data);
+      // console.log(data);
       context.state.userVideos = data;
       context.state.userVideos.forEach(videosUtil.updateThumbnail, context.state.userVideos);
       console.log('inner end');
@@ -115,14 +115,14 @@ const actions = {
       await context.dispatch('authMod/updateAuthorizationIfNeeded', {}, {root: true});
 
       const url = process.env.VUE_APP_BACKEND_API + `/api/v1/users/${Cookie.getCookie("userId")}/follow?followingToId=${followingToUserId}`;
-      console.log(url);
+      // console.log(url);
 
       const data = await requestWithAuth(context, "POST", url, null);
-      console.log('data');
-      console.log(data);
+      // console.log('data');
+      // console.log(data);
       context.state.isSuccess = true;
 
-      console.log('inner end');
+      // console.log('inner end');
     } catch (error) {
       console.log(error);
       context.state.isSuccess = false;
