@@ -128,4 +128,8 @@ a:active {
 .v-main__wrap {
   position: initial;
 }
+.v-btn:not(.v-btn--round).v-size--default {
+  height: 36px;
+  padding-right: 16px;
+}
 </style>
