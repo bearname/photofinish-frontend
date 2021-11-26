@@ -62,7 +62,8 @@
                 <option>100</option>
               </select>
               <v-btn
-                  style="position: absolute; top:12px; right: 0;"
+                  style="position: absolute; top: 12px;  padding: 0 16px 0 0; right: 0; min-width: inherit;"
+                  type="submit"
                   text
                   @click="searchSubmit()">
                 <IconSearch/>
@@ -336,7 +337,7 @@ export default {
       this.currentPath = picture.Path.replace("-thumb", "-preview");
     },
     async searchSubmit(e) {
-      e.preventDefault();
+      // e.preventDefault();
       this.offset = 0;
       try {
         await this.searchNext();
@@ -677,11 +678,11 @@ body, html {
 }
 
 .search_btn, .search_confidence {
-  width: 55px;
+  width: 29px;
   height: 55px;
   position: absolute;
   top: 0;
-  right: 18px;
+  right: 40px;
   border: 0;
   z-index: 2;
 }
