@@ -16,7 +16,7 @@ const clickHandler = function (events) {
   alertElement.classList.remove('hide');
   setTimeout(() => {
     alertElement.classList.add('hide');
-  }, 2500);
+  }, 4000);
 }
 
 EventBus.$on('events', clickHandler);

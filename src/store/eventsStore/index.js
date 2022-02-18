@@ -11,6 +11,7 @@ const state = {
   video: null,
   events: null,
   pageCount: 0,
+  responseData: null,
   url: {
     type: String,
     required: false,
@@ -39,6 +40,9 @@ const getters = {
   },
   getCode(state) {
     return state.code;
+  },
+  getResponseData(state) {
+    return state.responseData;
   },
 };
 

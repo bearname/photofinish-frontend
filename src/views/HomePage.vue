@@ -145,9 +145,7 @@
               class="btn btn-sm lb-modal-close"
               @click="isShowGallery = false"
       >
-        <div>
-          <IconCloseSecond/>
-        </div>
+        <IconCloseSecond/>
       </button>
       <div id="lightbox"
            tabindex="-1"
@@ -186,11 +184,12 @@
 
 <script>
 import {mapActions, mapGetters} from "vuex";
-import BASE_URL from "../config";
 import IconSearch from "../components/icons/IconSearch";
 import IconNavigateNext from "../components/icons/IconNavigateNext";
 import IconNavigatePrev from "../components/icons/IconNavigatePrev";
 import IconCloseSecond from "../components/icons/IconCloseSecond";
+import HasOwnProperty from "../util/util";
+import {publishEvent} from "@/events/event-bus";
 
 export default {
   name: "Home",
@@ -218,17 +217,15 @@ export default {
   },
   async mounted() {
     const page = {limit: 20, offset: 0}
-    const response = await this.searchImages(BASE_URL, {
+    const response = await this.searchImages({
       q: '',
       confidence: this.selectedConfident,
       limit: page.limit,
       offset: page.offset,
     });
-    if (!response.hasOwnProperty('Pictures')) {
+    if (!HasOwnProperty(response, 'Pictures')) {
       return;
     }
-    // console.log('response');
-    // console.log(response);
     this.images = response.Pictures;
     this.images.forEach(image => {
       image.Path = image.Path.replace("-preview", "-thumb");
@@ -268,7 +265,7 @@ export default {
     //       console.log(data);
     //     } catch (err) {
     //       this.notFoundImages(resultsElement);
-    //       console.log('error', err);
+    //       console.log('domainerror', err);
     //     }
     //   };
     // }
@@ -290,7 +287,7 @@ export default {
     //       console.log(data);
     //     } catch (err) {
     //       this.notFoundImages(resultsElement);
-    //       console.log('error', err);
+    //       console.log('domainerror', err);
     //     }
     //   };
     // }
@@ -300,11 +297,13 @@ export default {
   methods: {
     ...mapActions({
       logout: "authMod/logout",
+      searchImageList: "eventsMod/searchImages",
     }),
     ...mapGetters({
       isLogged: "authMod/isLoggedIn",
       getUser: "authMod/getCurrentUser",
       getCurrentUser: "authMod/getCurrentUser",
+      getEventsResponseData: "eventsMod/getResponseData",
     }),
     addImagesListener() {
       let resultsElement = document.getElementById("results");
@@ -336,13 +335,14 @@ export default {
       this.currentImage = i;
       this.currentPath = picture.Path.replace("-thumb", "-preview");
     },
-    async searchSubmit(e) {
+    async searchSubmit() {
       // e.preventDefault();
       this.offset = 0;
       try {
         await this.searchNext();
         // console.log(this.images);
       } catch (err) {
+        publishEvent(false, err)
         console.log('error', err);
       }
     },
@@ -360,7 +360,7 @@ export default {
         limit: this.limit,
         offset: this.offset
       };
-      const response = await this.searchImages(BASE_URL, options);
+      const response = await this.searchImages(options);
       this.images = response.Pictures;
       this.images.forEach(image => {
         image.Path = image.Path.replace("-preview", "-thumb");
@@ -368,37 +368,40 @@ export default {
       });
       this.allImagesCount = response.CountAllItems;
     },
-    async searchImages(baseUrl, options = {}) {
-      try {
-        let url = `${baseUrl}/api/v1/picture/search?`;
-        if (options.hasOwnProperty('q')) {
-          url += `number=${options.q}`;
-        }
-        if (options.hasOwnProperty('confidence')) {
-          if (options.hasOwnProperty('q')) {
-            url += `&`;
-          }
-          url += `confidence=${options.confidence}`;
-        }
-        if (options.hasOwnProperty('eventId')) {
-          url += `&eventId=${options.eventId}`;
-        }
-        if (options.hasOwnProperty('limit')) {
-          url += `&limit=${options.limit}`;
-        }
-        if (options.hasOwnProperty('offset')) {
-          url += `&offset=${options.offset}`;
-        }
-
-        const response = await fetch(url);
-        if (!response.ok) {
-          return [];
-        }
-        return await response.json();
-      } catch (err) {
-        console.log('error', err);
-        return [];
-      }
+    async searchImages(options = {}) {
+      await this.searchImageList(options)
+      return this.getEventsResponseData()
+      //
+      // try {
+      //   let url = `${baseUrl}/api/v1/pictures/search?`;
+      //   if (HasOwnProperty(options, 'q')) {
+      //     url += `number=${options.q}`;
+      //   }
+      //   if (HasOwnProperty(options, 'confidence')) {
+      //     if (HasOwnProperty(options, 'q')) {
+      //       url += `&`;
+      //     }
+      //     url += `confidence=${options.confidence}`;
+      //   }
+      //   if (HasOwnProperty(options, 'eventId')) {
+      //     url += `&eventId=${options.eventId}`;
+      //   }
+      //   if (HasOwnProperty(options, 'limit')) {
+      //     url += `&limit=${options.limit}`;
+      //   }
+      //   if (HasOwnProperty(options, 'offset')) {
+      //     url += `&offset=${options.offset}`;
+      //   }
+      //
+      //   const response = await axios.get(url);
+      //   if (response.status !== 200) {
+      //     return [];
+      //   }
+      //   return response.data;
+      // } catch (err) {
+      //   console.log('domainerror', err);
+      //   return [];
+      // }
     },
   }
 }

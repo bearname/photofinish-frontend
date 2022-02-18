@@ -1,7 +1,8 @@
 import dbUtils from '../dbUtils';
 import jwt_decode from 'jwt-decode';
-
-const BASE_URL = "https://thawing-sea-83431.herokuapp.com";
+import BASE_URL from "../../config";
+// const BASE_URL = "http://localhost:8000";
+// const BASE_URL = "https://thawing-sea-83431.herokuapp.com";
 
 const actions = {
     async login(context, {username, password}) {

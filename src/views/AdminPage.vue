@@ -37,6 +37,23 @@
       </v-row>
     </v-container>
     <v-container>
+      <v-row class="mb-10" v-if="taskStats !== null">
+        <v-col>
+          <div class="text-left" v-if="taskStats.failed === 0 && taskStats.processing === 0">
+            <h4>Complete</h4>
+            <p>Execution time: {{ taskStats.executionTime.getHours() }} hours {{ taskStats.executionTime.getMinutes() }}
+              min {{ taskStats.executionTime.getSeconds() }} sec</p>
+          </div>
+          <p class="text-left">Task started at {{ taskStats.startedAt }}</p>
+          <p class="text-left">Last update at {{ taskStats.lastUpdateAt }}</p>
+          <p class="text-left">Count completed image = {{ taskStats.completed }}</p>
+          <p class="text-left">Count processing image = {{ taskStats.processing }}</p>
+          <p class="text-left">Count failed image = {{ taskStats.failed }}</p>
+          <p class="text-left">Completed {{
+              Math.ceil((taskStats.completed / (taskStats.completed + taskStats.processing + taskStats.failed) * 100) * 10) / 10
+            }}%</p>
+        </v-col>
+      </v-row>
       <v-row class="mb-10">
         <v-btn class="btn" v-on:click="openNewEventPopup">Create event</v-btn>
         <v-btn class="btn" v-on:click="openNewImagePopup">Add images</v-btn>
@@ -52,49 +69,118 @@
       <v-row v-if="picturesToDelete.length >0">
         <div>Selected images:</div>
         <div v-if="picturesToDelete.length > 0">
-          <div v-for="image in picturesToDelete">
+          <div v-for="image in picturesToDelete" v-bind:key="image">
             {{ image }}
           </div>
         </div>
       </v-row>
       <v-row v-if="events !== null">
-        <v-simple-table>
-          <template v-slot:default>
-            <thead>
-            <tr>
-              <th class="text-left">
-                Name
-              </th>
-              <th class="text-left">
-                Location
-              </th>
-              <th class="text-left">
-                Action
-              </th>
-              <!--              <th class="text-left">-->
-              <!--                Action-->
-              <!--              </th>-->
-            </tr>
-            </thead>
-            <tbody>
-            <tr
-                v-for="item in events"
-                :key="item.Id"
-            >
-              <td>{{ item.Name }}</td>
-              <td>{{ item.Location }}</td>
-              <td>
-                <button class="btn" v-on:click="onDeleteEvent(item.Id)">
-                  <IconDelete/>
-                </button>
-                <button class="btn" @click="searchEventImage(item.Id)">
-                  <IconSearch/>
-                </button>
-              </td>
-            </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
+        <v-col cols="12">
+          <h2 class="h3 text-left">Events</h2>
+        </v-col>
+        <v-col cols="12">
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+              <tr>
+                <th class="text-left">
+                  Name
+                </th>
+                <th class="text-left">
+                  Location
+                </th>
+                <th class="text-left">
+                  Action
+                </th>
+                <!--              <th class="text-left">-->
+                <!--                Action-->
+                <!--              </th>-->
+              </tr>
+              </thead>
+              <tbody>
+              <tr
+                  v-for="item in events"
+                  :key="item.Id"
+              >
+                <td>{{ item.Name }}</td>
+                <td>{{ item.Location }}</td>
+                <td>
+                  <button class="btn" v-on:click="onDeleteEvent(item.Id)">
+                    <IconDelete/>
+                  </button>
+                  <button class="btn" @click="searchEventImage(item.Id)">
+                    <IconSearch/>
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-col>
+      </v-row>
+      <v-row v-if="tasks !== null">
+        <v-col cols="12">
+          <h2 class="h3 text-left">Tasks</h2>
+        </v-col>
+        <v-col cols="12">
+          <div v-if="tasks.length === 0">Not processed tasks</div>
+          <v-simple-table v-else>
+            <template v-slot:default>
+              <thead>
+              <tr>
+                <th class="text-left">
+                  Status
+                </th>
+                <th class="text-left">
+                  Count Images
+                </th>
+                <th class="text-left">
+                  Started At
+                </th>
+                <th class="text-left">
+                  Last Update At
+                </th>
+                <th class="text-left">
+                  Action
+                </th>
+                <th class="text-left">
+                  Task Statistic
+                </th>
+                <!--              <th class="text-left">-->
+                <!--                Action-->
+                <!--              </th>-->
+              </tr>
+              </thead>
+              <tbody>
+              <tr class="text-left"
+                  v-for="item in tasks"
+                  :key="item.Id"
+              >
+                <td>{{ item.IsCompleted ? "Completed" : "Not Completed" }}</td>
+                <td>{{ item.CountImages }}</td>
+                <td>{{ formatDate(item.StartedAt) }}</td>
+                <td>{{ formatDate(item.LastUpdateAt) }}</td>
+                <td>
+                  <button class="btn" v-on:click="onDeleteTask(item.Id)">
+                    <IconDelete/>
+                  </button>
+                  <button class="btn" @click="onShowTaskStat(item.Id)">
+                    <IconSearch/>
+                  </button>
+                </td>
+                <td v-if="taskStatistic !== null && taskStatistic.id === item.Id" class="text-left" >
+                  <div v-for="item in taskStatistic.Stats">
+                    <p>{{ formatPictureStatus(item.Status) }} : {{ item.Count }}</p>
+                  </div>
+<!--                  {{item.StartedAt}}-->
+<!--                  <p>Started at {{ formatDate(taskStatistic.StartedAt) }}</p>-->
+<!--                  <p>Ended at {{ formatDate(taskStatistic.LastUpdatedAt) }}</p>-->
+                </td>
+              </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-col>
       </v-row>
     </v-container>
     <v-container>
@@ -186,8 +272,12 @@
                     :rules="path"
                     hint="/images"
                     hide-details="auto"
+                    @input="showDropboxFolderHints"
                     color="grey darken-3"
+                    :name="Math.random()"
                 ></v-text-field>
+                <p>Available folders</p>
+                <div v-for="folder in dropboxFolders" v-bind:key="folder">{{ folder }}</div>
               </v-card-text>
               <v-card-text>
                 <v-select
@@ -328,7 +418,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
+import {mapActions, mapGetters, mapMutations} from "vuex";
 import {publishEvent} from "@/events/event-bus";
 import axios from 'axios';
 import BASE_URL from "@/config";
@@ -337,13 +427,18 @@ import IconDelete from "@/components/icons/IconDelete";
 import IconNavigatePrev from "@/components/icons/IconNavigatePrev";
 import IconNavigateNext from "@/components/icons/IconNavigateNext";
 import IconClose from "@/components/icons/IconClose";
+import HasOwnProperty from "../util/util";
+import {formatDate} from "@/util/util";
+import formatPictureStatus from "@/store/tasksStore/util";
 
 export default {
-  name: "Playlist",
+  name: "AdminPage",
   components: {IconClose, IconNavigateNext, IconNavigatePrev, IconDelete, IconSearch},
   data() {
     return {
       events: null,
+      tasks: null,
+      taskStatistic: null,
       picturesToDelete: [],
       images: null,
       isShow: false,
@@ -368,21 +463,92 @@ export default {
       dropboxPath: "/",
       picturePath: '',
       currentImage: -1,
+      taskStats: null,
+      dropboxFolders: [],
+      isShowDropboxHints: true,
+      cancelTokenSource: axios.CancelToken.source(),
+      updateTaskStatisticsInterval: null,
       rules: [
         value => !!value || 'Required.',
         value => (value && value.length >= 3) || 'Min 3 characters',
       ],
       path: [
         value => !!value || 'Required.',
-        value => (value && value.length >= 2 && value[0] === '/') || 'Min 2 characters',
+        value => {
+          console.log("value")
+          console.log(value)
+          const b = this.dropboxFolders.some(item => {
+            return item.includes(value);
+          });
+
+          return value && value.length >= 2 && value[0] === '/' && b || 'Unknown folder'
+        },
+        value => {
+          let b = value && value.length >= 2 && value[0] === '/';
+          return b || 'Min 2 characters';
+        },
       ]
     }
   },
   async created() {
     await this.fetchEvents();
+    await this.fetchDropboxFolders();
+    await this.fetchTasks();
   },
   mounted() {
-    document.addEventListener('keydown', (e) => {
+    this.updateTaskStats();
+    document.addEventListener('keydown', this.keydownListener);
+  },
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.keydownListener);
+  },
+  computed: {
+    options() {
+      if (this.events !== null) {
+        const data = [];
+        this.events.forEach(item => {
+          data.push(item.Id + ' ' + item.Name);
+        });
+        return data;
+      }
+      return [];
+    },
+  },
+  methods: {
+    ...mapActions({
+      findEvents: "eventsMod/findEvents",
+      createNewEvent: "eventsMod/createEvent",
+      newImagesToRekognition: "eventsMod/newImages",
+      deleteEvent: "eventsMod/deleteEventPermanent",
+      deletePicture: "eventsMod/deleteImagePermanent",
+      getTaskStatistic: "tasksMod/getTaskStatistic",
+      getDropboxFolders: "tasksMod/getDropboxFolders",
+      getTasks: "tasksMod/getTasks",
+    }),
+    ...mapMutations({
+      setTaskId: "tasksMod/SET_TASK_ID"
+    }),
+    ...mapGetters({
+      getResponseData: "eventsMod/getResponseData",
+      getStatus: "eventsMod/getStatus",
+      getMessage: "eventsMod/getMessage",
+      getEvents: "eventsMod/getEvents",
+      getTaskResponseData: "tasksMod/getResponseData",
+      getTaskId: "tasksMod/getTaskId",
+      getTaskStats: "tasksMod/getTaskStats",
+    }),
+    formatDate: formatDate,
+    formatPictureStatus: formatPictureStatus,
+    async onShowTaskStat(taskId) {
+      if (this.taskStatistic !== null && taskId === this.taskStatistic.id) {
+        return
+      }
+      await this.getTaskStatistic({taskId});
+      this.taskStatistic = this.getTaskStats();
+      this.taskStatistic.id = taskId
+      console.log(this.taskStatistic)
+    },
+    keydownListener(e) {
       const code = e.code;
       console.log(` ${code}`);
       if (this.isShowGallery) {
@@ -409,37 +575,15 @@ export default {
           this.isShowPageSelection = !this.isShowPageSelection;
         }
       }
-    });
-  },
-  computed: {
-    options() {
-      if (this.events !== null) {
-        const data = [];
-        this.events.forEach(item => {
-          data.push(item.Id + ' ' + item.Name);
-        });
-        return data;
-      }
-      return [];
     },
-  },
-  methods: {
-    ...mapActions({
-      findEvents: "eventsMod/findEvents",
-      createNewEvent: "eventsMod/createEvent",
-      newImagesToRekognition: "eventsMod/newImages",
-      deleteEvent: "eventsMod/deleteEventPermanent",
-      deletePicture: "eventsMod/deleteImagePermanent",
-    }),
-    ...mapGetters({
-      getStatus: "eventsMod/getStatus",
-      getMessage: "eventsMod/getMessage",
-      getEvents: "eventsMod/getEvents",
-    }),
     async fetchEvents() {
       // console.log("data");
       // console.log(events);
       this.events = await this.findEvents();
+    },
+    async fetchTasks() {
+      await this.getTasks({limit: 10, offset: 0});
+      this.tasks = this.getTaskResponseData();
     },
     async goToPage() {
       if (this.isShowPageSelection) {
@@ -599,11 +743,32 @@ export default {
         });
         this.newImageToProcessingPopup = false;
         const status = this.getStatus();
-        publishEvent(status, status ? "Sent for processing" : this.getMessage());
+        const responseData = this.getResponseData()
+        console.log(responseData);
+        const {TaskId, CompletedImages, CountAllImages} = responseData.data;
+        alert(TaskId);
+        this.setTaskId(TaskId);
+        let getter = this.$store.getters["tasksMod/getTaskId"];
+        console.log(getter)
+        publishEvent(status, status ? "Sent for processing " : this.getMessage() + ` taskId ${TaskId}, count image = ${CountAllImages}, completed = ${CompletedImages}`);
+        // this.cancelTokenSource.cancel();
+        this.updateTaskStats();
       } catch (e) {
         console.log(e);
         publishEvent(false, e);
       }
+    },
+    getTaskExecutionTime(taskStats) {
+      let last = new Date(taskStats.lastUpdateAt);
+      let start = new Date(taskStats.startedAt);
+      start.setTime(start.getTime() + (6 * 60 * 60 * 1000));
+      return new Date(last.getTime() - start.getTime());
+    },
+    getTaskStatsMessage(taskStats) {
+      return `Task started at ${taskStats.startedAt}, last update at ${taskStats.lastUpdateAt}
+            count completed image = ${taskStats.completed}
+            count processing image = ${taskStats.processing}
+            count failed image = ${taskStats.failed}`;
     },
     setEventId(item) {
       console.log(item);
@@ -618,7 +783,7 @@ export default {
       this.imagePage = page;
       console.log("this.limit")
       console.log(this.limit)
-      const response = await axios.get(`${BASE_URL}/api/v1/picture/search?eventId=${eventId}&offset=${this.imagePage * this.limit}&limit=${this.limit}&confidence=${this.confidence}`);
+      const response = await axios.get(`${BASE_URL}/api/v1/pictures/search?eventId=${eventId}&offset=${this.imagePage * this.limit}&limit=${this.limit}&confidence=${this.confidence}`);
       const data = response.data;
       const countPages = Math.ceil(data.CountAllItems / this.limit);
       console.log(countPages);
@@ -628,7 +793,6 @@ export default {
         image.Path = image.Path.replace("-preview", "-thumb");
         return image;
       });
-
       console.log(this.images);
     },
     async previousPage() {
@@ -645,7 +809,77 @@ export default {
         await this.searchEventImages(this.eventId, this.imagePage);
       }
     },
-  },
+    showDropboxFolderHints(e) {
+      let b = this.dropboxFolders.some(item => item.includes(e.value));
+      console.log(b);
+    },
+    updateTaskStats() {
+      if (this.cancelTokenSource != null) {
+        this.cancelTokenSource.cancel()
+      }
+      if (this.updateTaskStatisticsInterval !== null) {
+        clearInterval(this.updateTaskStatisticsInterval);
+      }
+      this.cancelTokenSource = axios.CancelToken.source();
+      console.log(this.cancelTokenSource);
+      const taskId = this.$store.getters["tasksMod/getTaskId"];
+      if (taskId === null) {
+        clearInterval(this.updateTaskStatisticsInterval)
+        return
+      }
+      this.updateTaskStatisticsInterval = setInterval(async () => {
+        // this.cancelTokenSource.cancel()
+        await this.getTaskStatistic({taskId, cancelTokenSource: this.cancelTokenSource});
+        const respData = this.getTaskResponseData();
+        const data = respData.data;
+
+        if (!HasOwnProperty(data, "Stats") || !HasOwnProperty(data, "StartedAt") || !HasOwnProperty(data, "LastUpdatedAt")) {
+          // this.cancelTokenSource.cancel();
+          // clearInterval(this.updateTaskStatisticsInterval);
+          // return;
+        }
+        const {Stats, StartedAt, LastUpdatedAt} = data;
+        if (Stats === null || StartedAt === null || LastUpdatedAt === null) {
+          return
+        }
+
+
+        const taskStats = {
+          startedAt: StartedAt,
+          lastUpdateAt: LastUpdatedAt,
+          completed: 0,
+          failed: 0,
+          processing: 0,
+        };
+
+        Stats.forEach(item => {
+          console.log(item);
+          switch (item.Status) {
+            case 0:
+              taskStats.completed += item.Count;
+              break
+            case 1:
+              taskStats.processing += item.Count;
+              break
+            case 2:
+              taskStats.failed += item.Count;
+              break
+          }
+        })
+        this.taskStats = taskStats;
+        const result = this.getTaskStatsMessage(taskStats);
+        console.log(result);
+        if (taskStats.processing === 0 && taskStats.failed === 0) {
+          this.taskStats.executionTime = this.getTaskExecutionTime(taskStats);
+          clearInterval(this.updateTaskStatisticsInterval)
+        }
+      }, 2000);
+    },
+    async fetchDropboxFolders() {
+      await this.getDropboxFolders();
+      this.dropboxFolders = this.getTaskResponseData();
+    }
+  }
 }
 </script>
 

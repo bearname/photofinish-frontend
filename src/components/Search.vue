@@ -38,18 +38,15 @@ export default {
     }
   },
   async created() {
+
     if (this.search !== undefined && this.search !== null && this.search.length !== 0) {
       await this.searchVideos(this.search);
       // console.log(this.search);
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Slash') {
-          let searchBoxElement = document.getElementById('searchBox');
-          if (searchBoxElement !== null) {
-            searchBoxElement.focus();
-          }
-        }
-      });
+      document.addEventListener('keydown', this.searchListeners);
     }
+  },
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.searchListeners);
   },
   methods: {
     ...mapActions({
@@ -59,6 +56,14 @@ export default {
       getVideos: "eventsMod/getVideos",
       getPageCount: "eventsMod/getPageCount"
     }),
+    searchListeners(e) {
+      if (e.key === 'Slash') {
+        let searchBoxElement = document.getElementById('searchBox');
+        if (searchBoxElement !== null) {
+          searchBoxElement.focus();
+        }
+      }
+    },
     async searchVideo() {
       await this.searchVideos(this.search);
       this.show = true;

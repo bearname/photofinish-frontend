@@ -1,6 +1,7 @@
 import Vuex from 'vuex';
 import authModule from './authStore/index.js';
 import eventsModule from './eventsStore/index.js';
+import tasksModule from './tasksStore/index.js';
 import userModule from './userStore/index.js';
 
 import createPersistedState from 'vuex-persistedstate';
@@ -10,6 +11,7 @@ const modules = {
   eventsMod: eventsModule,
   authMod: authModule,
   userMod: userModule,
+  tasksMod: tasksModule,
 };
 
 const plugins = [

@@ -4,6 +4,7 @@ import vuetify from './plugins/vuetify'
 require('dotenv').config()
 import {registerPlugins} from "./plugins";
 import {createStore} from './store';
+import './util/util';
 import routerModule from "./routers";
 // import {sync} from 'vuex-router-sync';
 

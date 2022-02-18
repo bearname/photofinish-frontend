@@ -3,8 +3,10 @@ import videosUtil from './videoUtil';
 import logError from '../../util/logger';
 import makeRequest from '../../api/api';
 import VideoStatus from './videoStatus';
-const BASE_URL = "https://thawing-sea-83431.herokuapp.com";
-
+import BASE_URL from "../../config";
+import HasOwnProperty from "@/util/util";
+// const BASE_URL = "https://thawing-sea-83431.herokuapp.com";
+// const BASE_URL = "http://localhost:8000";
 const actions = {
     async getVideoById(context, {videoId}) {
         try {
@@ -35,18 +37,21 @@ const actions = {
                 },
             };
 
-            const url =BASE_URL + `/api/v1/picture/detectText/dropbox?path=${path}&eventId=${eventId}`;
+            const url = BASE_URL + `/api/v1/pictures/detectText/dropbox?path=${path}&eventId=${eventId}`;
             // console.log('upload video' + url);
-            axios.post(url, null, config).then(data => console.log(data)).then(err => console.log(err));
+            const resp = await axios.post(url, null, config);
+            context.state.responseData = resp.data;
+
+            // axios.post(url, null, config).then(data => console.log(data)).then(err => console.log(err));
         } catch (error) {
             context.state.isProcessing = false;
-            // console.error(error);
+            // console.domainerror(domainerror);
             // console.log('FAILURE!!');
         }
     },
     async getVideoOnPage(context, page = '1', countVideoOnPage = '10') {
         try {
-            const url =BASE_URL + '/api/v1/videos/?page=' + page +
+            const url = BASE_URL + '/api/v1/videos/?page=' + page +
                 '&countVideoOnPage=' + countVideoOnPage;
             // console.log(url);
             const response = await axios.get(url);
@@ -66,7 +71,7 @@ const actions = {
     async createEvent(context, {name, location, date}) {
         try {
             await context.dispatch('authMod/updateAuthorizationIfNeeded', {}, {root: true});
-            const url =BASE_URL + '/api/v1/events';
+            const url = BASE_URL + '/api/v1/events';
             const config = {
                 method: 'POST',
                 headers: {
@@ -90,7 +95,7 @@ const actions = {
     async deleteEventPermanent(context, {eventId}) {
         try {
             await context.dispatch('authMod/updateAuthorizationIfNeeded', {}, {root: true});
-            const url =BASE_URL + '/api/v1/events/' + eventId;
+            const url = BASE_URL + '/api/v1/events/' + eventId;
             const config = {
                 method: 'DELETE',
                 headers: {
@@ -109,10 +114,10 @@ const actions = {
             throw error;
         }
     },
-   async deleteImagePermanent(context, {pictureId}) {
+    async deleteImagePermanent(context, {pictureId}) {
         try {
             await context.dispatch('authMod/updateAuthorizationIfNeeded', {}, {root: true});
-            const url =BASE_URL + '/api/v1/picture/' + pictureId;
+            const url = BASE_URL + '/api/v1/pictures/' + pictureId;
             const config = {
                 method: 'DELETE',
                 headers: {
@@ -132,14 +137,13 @@ const actions = {
         }
     },
 
-    async findEvents(context) {
+    async findEvents(context,) {
         try {
             const offset = 0;
             const limit = 20;
             const url = BASE_URL + '/api/v1/events?offset=' + offset + '&limit=' + limit;
             const config = {
                 headers: {
-                    'Content-Type': 'video/mp4',
                     'Authorization': context.rootGetters['authMod/getTokenHeader'],
                 },
             };
@@ -157,6 +161,39 @@ const actions = {
             return data.data;
         } catch (error) {
             logError(error);
+        }
+    },
+
+    async searchImages(context, options = {}) {
+        try {
+            let url = `${BASE_URL}/api/v1/pictures/search?`;
+            if (HasOwnProperty(options, 'q')) {
+                url += `number=${options.q}`;
+            }
+            if (HasOwnProperty(options, 'confidence')) {
+                if (HasOwnProperty(options, 'q')) {
+                    url += `&`;
+                }
+                url += `confidence=${options.confidence}`;
+            }
+            if (HasOwnProperty(options, 'eventId')) {
+                url += `&eventId=${options.eventId}`;
+            }
+            if (HasOwnProperty(options, 'limit')) {
+                url += `&limit=${options.limit}`;
+            }
+            if (HasOwnProperty(options, 'offset')) {
+                url += `&offset=${options.offset}`;
+            }
+
+            const response = await axios.get(url);
+            if (response.status !== 200) {
+                return [];
+            }
+            context.state.responseData = response.data;
+        } catch (err) {
+            console.log('error', err);
+            return [];
         }
     },
 };

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import HomePage from '../views/HomePage.vue';
 import LoginPage from '../views/LoginPage';
 import AdminPage from '../views/AdminPage';
+import PaymentPage from "../views/PaymentPage";
 
 function routes(store) {
   return {
@@ -10,6 +11,11 @@ function routes(store) {
       name: 'home',
       path: '/',
       component: HomePage,
+    },
+    payment: {
+      name: 'payment',
+      path: '/checkout',
+      component: PaymentPage,
     },
     admin: {
       name: 'admin',
@@ -54,6 +60,7 @@ let routerModule = (function () {
         // routes(store).user,
         // routes(store).uploadVideo,
         routes(store).login,
+        routes(store).payment,
         // routes(store).search,
         routes(store).admin,
       ],
